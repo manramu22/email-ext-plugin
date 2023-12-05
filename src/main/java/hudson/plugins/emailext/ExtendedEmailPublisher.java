@@ -40,6 +40,7 @@ import hudson.plugins.emailext.plugins.content.EmailExtScript;
 import hudson.plugins.emailext.plugins.content.TriggerNameContent;
 import hudson.plugins.emailext.watching.EmailExtWatchAction;
 import hudson.plugins.emailext.watching.EmailExtWatchJobProperty;
+import hudson.plugins.emailext.webhooks.WebhooksUtil;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.MailMessageIdAction;
 import hudson.tasks.Notifier;
@@ -1145,8 +1146,10 @@ public class ExtendedEmailPublisher extends Notifier implements MatrixAggregatab
             }
             String inlinedCssHtml = inliner.process(text);
             msgPart.setContent(inlinedCssHtml, messageContentType);
+            new WebhooksUtil().sendMessage(inlinedCssHtml, context.getRun().getUrl());
         } else {
             msgPart.setContent(text, messageContentType);
+            new WebhooksUtil().sendMessage(text, context.getRun().getUrl());
         }
 
         multipart.addBodyPart(msgPart);

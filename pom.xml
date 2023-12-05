@@ -13,7 +13,8 @@
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>Email Extension Plugin</name>
-  <description>Allows to configure every aspect of email notifications: when an email is sent, who should receive it and what the email says</description>
+  <description>Allows to configure every aspect of email notifications: when an email is sent, who
+    should receive it and what the email says</description>
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 
   <licenses>
@@ -130,6 +131,11 @@
       <groupId>net.htmlparser.jericho</groupId>
       <artifactId>jericho-html</artifactId>
       <version>3.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.14</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
