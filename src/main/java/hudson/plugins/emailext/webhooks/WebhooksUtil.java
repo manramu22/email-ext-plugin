@@ -16,14 +16,12 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 public class WebhooksUtil {
 
-    public void sendMessage(String content, String jobURL) {
-        String jenkinsView = getJenkinsView(jobURL);
-        String webhookURL = getWebhookURL(jenkinsView);
+    public void sendMessage(String content, String jobBaseName) {
+        String projectId = extractProjectId(jobBaseName);
+        String webhookURL = getWebhookURL(projectId);
         String normalizedContent = content.replaceAll("[\\n\\r\\t]", "");
         Map<String, String> requestMap = new HashMap<>();
         requestMap.put("text", normalizedContent);
-        requestMap.put("jobURL", jobURL);
-        requestMap.put("configPath", Jenkins.get().getRootDir().getPath() + "/email-templates/hooks-config.csv");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = null;
         try {
@@ -42,9 +40,13 @@ public class WebhooksUtil {
         }
     }
 
-    private String getJenkinsView(String jobURL) {
-        String[] tokens = jobURL.split("/");
-        return tokens[3];
+    private String extractProjectId(String jobBaseName) {
+        try {
+            String jobNameWithoutPrefix = jobBaseName.split("-")[1];
+            return jobNameWithoutPrefix.split("_")[0];
+        } catch (ArrayIndexOutOfBoundsException exception) {
+            return "default";
+        }
     }
 
     private String getWebhookURL(String jenkinsView) {

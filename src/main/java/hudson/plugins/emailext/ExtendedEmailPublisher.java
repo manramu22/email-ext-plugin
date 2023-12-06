@@ -119,8 +119,7 @@ public class ExtendedEmailPublisher extends Notifier implements MatrixAggregatab
     public static final String PROJECT_DEFAULT_BODY_TEXT = "$PROJECT_DEFAULT_CONTENT";
 
     /**
-     * A comma-separated list of email recipient that will be used for every
-     * theTrigger.
+     * A comma-separated list of email recipient that will be used for every theTrigger.
      */
     public String recipientList = "";
 
@@ -130,14 +129,12 @@ public class ExtendedEmailPublisher extends Notifier implements MatrixAggregatab
     public List<EmailTrigger> configuredTriggers = new ArrayList<>();
 
     /**
-     * The contentType of the emails for this project (text/html, text/plain,
-     * etc).
+     * The contentType of the emails for this project (text/html, text/plain, etc).
      */
     public String contentType;
 
     /**
-     * The default subject of the emails for this project.
-     * ($PROJECT_DEFAULT_SUBJECT)
+     * The default subject of the emails for this project. ($PROJECT_DEFAULT_SUBJECT)
      */
     public String defaultSubject;
 
@@ -770,8 +767,8 @@ public class ExtendedEmailPublisher extends Notifier implements MatrixAggregatab
     }
 
     /**
-     * Expand the plugin class loader with URL taken from the project descriptor
-     * and the global configuration.
+     * Expand the plugin class loader with URL taken from the project descriptor and the global
+     * configuration.
      *
      * @param context the current email context
      * @param loader the class loader to expand
@@ -1146,10 +1143,20 @@ public class ExtendedEmailPublisher extends Notifier implements MatrixAggregatab
             }
             String inlinedCssHtml = inliner.process(text);
             msgPart.setContent(inlinedCssHtml, messageContentType);
-            new WebhooksUtil().sendMessage(inlinedCssHtml, context.getRun().getUrl());
+            if (!disabled) {
+                new WebhooksUtil()
+                        .sendMessage(
+                                inlinedCssHtml,
+                                context.getRun().getCharacteristicEnvVars().get("JOB_BASE_NAME"));
+            }
         } else {
             msgPart.setContent(text, messageContentType);
-            new WebhooksUtil().sendMessage(text, context.getRun().getUrl());
+            if (!disabled) {
+                new WebhooksUtil()
+                        .sendMessage(
+                                text,
+                                context.getRun().getCharacteristicEnvVars().get("JOB_BASE_NAME"));
+            }
         }
 
         multipart.addBodyPart(msgPart);
@@ -1168,17 +1175,15 @@ public class ExtendedEmailPublisher extends Notifier implements MatrixAggregatab
     }
 
     /**
-     * Looks for a previous build, so long as that is in fact completed.
-     * Necessary since {@link #getRequiredMonitorService} does not wait for the
-     * previous build, so in the case of parallel-capable jobs, we need to
-     * behave sensibly when a later build actually finishes before an earlier
-     * one.
+     * Looks for a previous build, so long as that is in fact completed. Necessary since
+     * {@link #getRequiredMonitorService} does not wait for the previous build, so in the case of
+     * parallel-capable jobs, we need to behave sensibly when a later build actually finishes before
+     * an earlier one.
      *
      * @param run a run for which we may be sending mail
-     * @param listener a listener to which we may print warnings in case the
-     * actual previous build is still in progress
-     * @return the previous build, or null if that build is missing, or is still
-     * in progress
+     * @param listener a listener to which we may print warnings in case the actual previous build is
+     * still in progress
+     * @return the previous build, or null if that build is missing, or is still in progress
      */
     public static @CheckForNull Run<?, ?> getPreviousRun(@NonNull Run<?, ?> run, TaskListener listener) {
         Run<?, ?> previousRun = run.getPreviousBuild();
